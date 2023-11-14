@@ -8,7 +8,7 @@ function getRandomHexColor() {
 const stopBtn = document.querySelector('[data-stop]');
 const startBtn = document.querySelector('[data-start]');
 const loadBg = document.body;
-let loadHex = null;
+stopBtn.disabled = true; 
 let hexAction = false;
 
 const hexPlay = () => {
@@ -16,17 +16,15 @@ const hexPlay = () => {
         loadBg.style.transition = "background-color ease-in-out 500ms"; 
 };
 
-
-
 startBtn.addEventListener('click', function() {
-        startBtn.disabled = "true";
-        stopBtn.removeAttribute('disabled');
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
         loadHex = setInterval(hexPlay,1000);
 });
 
 stopBtn.addEventListener('click', function() {
-        stopBtn.disabled = "true"; 
-        startBtn.removeAttribute('disabled');
+        stopBtn.disabled = true; 
+        startBtn.disabled = false;
         clearInterval(loadHex);
         console.log("set:", hexAction);
 });

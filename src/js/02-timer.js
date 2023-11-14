@@ -3,6 +3,9 @@ import flatpickr from 'flatpickr';
 // Additional styles import
 import 'flatpickr/dist/flatpickr.min.css';
 
+// Notify
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 // DOM
 const datetimePickerEl = document.querySelector('#datetime-picker');
 const startButtonEl = document.querySelector('button[data-start]');
@@ -11,72 +14,67 @@ const hoursEl = document.querySelector('span[data-hours]');
 const minutesEl = document.querySelector('span[data-minutes]');
 const secondsEl = document.querySelector('span[data-seconds]');
 
-//  --------------------------------------------------------------------
-
-// Disable button by default
+// disable button by default
 startButtonEl.disabled = true;
 
-// Options for flatpickr
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
+    // IMPLEMENT OUR LOGIC
     const selectedDate = selectedDates[0];
     const dateNow = Date.now();
 
-    // If the user selects a date from the past
     if (selectedDate < dateNow) {
-      window.alert('Please choose a date in the future');
+      Notify.failure('Please choose a date in the future');
       startButtonEl.disabled = true;
       return;
     }
 
-    // Enable Button if it's date in future
+    // if the date is in the future -> enable the button
     startButtonEl.disabled = false;
 
     // Begin Countdown
     let timerID = null;
 
-    // Handle Countdown
+    // Countdown Handler
     function handleCountdown() {
       startButtonEl.disabled = true;
       datetimePickerEl.disabled = true;
 
-      //  Run every 1 second (1000ms)
+      //   run every 1000 ms (1 second)
       timerID = setInterval(() => {
         const currentTime = Date.now();
 
-        // If countdown is finished -> clear timer
+        // when countdown ends -> clear timer
         if (selectedDate < currentTime) {
           clearInterval(timerID);
           datetimePickerEl.disabled = false;
+          Notify.success("Time's UP!");
           return;
         }
 
         const timeDifference = selectedDate - currentTime;
 
-        // Destructure convertMS return object
         const { days, hours, minutes, seconds } = convertMs(timeDifference);
 
         daysEl.textContent = addLeadingZero(days);
         hoursEl.textContent = addLeadingZero(hours);
         minutesEl.textContent = addLeadingZero(minutes);
         secondsEl.textContent = addLeadingZero(seconds);
+        
       }, 1000);
     }
-
     startButtonEl.addEventListener('click', handleCountdown);
   },
 };
 
-// Call flatpickr
+// Create flatpickr
 flatpickr('#datetime-picker', options);
 
-//  --------------------------------------------------------------------
-
-// Time Formatting
+// -----------------------------------------------------------------
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -96,7 +94,6 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// Format time in (00 Days, 00 Hours, 00 Minutes, 00 Seconds)
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
