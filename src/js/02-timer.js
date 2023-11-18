@@ -60,10 +60,11 @@ const options = {
 
         const { days, hours, minutes, seconds } = convertMs(timeDifference);
 
-        daysEl.textContent = addLeadingZero(days);
-        hoursEl.textContent = addLeadingZero(hours);
-        minutesEl.textContent = addLeadingZero(minutes);
-        secondsEl.textContent = addLeadingZero(seconds);
+        //setting text content by 2 characters through parsing into string and padStart() method
+        daysEl.textContent = String(days).padStart(2, '0');
+        hoursEl.textContent = String(hours).padStart(2, '0');
+        minutesEl.textContent = String(minutes).padStart(2, '0');
+        secondsEl.textContent = String(seconds).padStart(2, '0');
         
       }, 1000);
     }
@@ -92,8 +93,4 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
-}
-
-function addLeadingZero(value) {
-  return String(value).padStart(2, '0');
 }
